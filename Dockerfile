@@ -1,8 +1,12 @@
 ARG BUILD_FROM
 FROM $BUILD_FROM
 
-# Copy data for add-on
-COPY run.sh /
-RUN chmod a+x /run.sh
+RUN apk add --update nodejs npm
 
-CMD [ "/run.sh" ]
+WORKDIR /data
+
+COPY ./ ./
+
+RUN npm install
+
+CMD ["npm", "run", "start"]

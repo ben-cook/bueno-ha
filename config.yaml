@@ -3,6 +3,7 @@ description: "Connect Home Assistant to the Bueno platform (https://buenoanalyti
 version: "1.0.0"
 slug: "bueno-ha"
 init: false
+homeassistant_api: true
 arch:
   - aarch64
   - amd64
