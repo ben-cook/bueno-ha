@@ -1,12 +1,11 @@
-ARG BUILD_FROM
-FROM $BUILD_FROM
+FROM ghcr.io/hassio-addons/base-nodejs:0.1.4
 
-RUN apk add --update nodejs npm
+WORKDIR /app
 
-WORKDIR /data
-
-COPY ./ ./
+COPY / /app
 
 RUN npm install
 
-CMD ["npm", "run", "start"]
+RUN chmod a+x /app/run.sh
+
+CMD [ "/app/run.sh" ]
