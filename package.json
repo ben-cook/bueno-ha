@@ -4,11 +4,13 @@
   "description": "Connect Home Assistant to the Bueno platform (https://buenoanalytics.com/)",
   "author": "Ben Cook - benpetercook@gmail.com",
   "license": "ISC",
+  "type": "module",
   "scripts": {
-    "start": "node --loader ts-node/esm src/index.ts"
+    "start": "node --experimental-specifier-resolution=node --loader ts-node/esm src/index.ts"
   },
   "dependencies": {
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^22.1.0",

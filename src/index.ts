@@ -1,7 +1,29 @@
-console.log("Starting node process...")
+import { StartCommandMessage } from "./types";
+import { HAWSClient } from "./client";
 
-const SUPERVISOR_TOKEN = process.env['SUPERVISOR_TOKEN']
+console.log("Starting node process...");
 
-console.log(`SUPERVISOR_TOKEN: ${SUPERVISOR_TOKEN}`)
+const SUPERVISOR_TOKEN = process.env["SUPERVISOR_TOKEN"];
 
-console.log("Ending node process...")
+if (SUPERVISOR_TOKEN == null) {
+  throw new Error(
+    "Can't initialise application: missing SUPERVISOR_TOKEN environment variable",
+  );
+}
+
+const ws = new HAWSClient(SUPERVISOR_TOKEN);
+
+ws.onMessage((message) => {
+  console.log(`received message: ${JSON.stringify(message, null, 2)}`);
+
+  switch (message.type) {
+    case "auth_ok":
+      // subscribe to events
+      ws.send({
+        id: 10,
+        type: "subscribe_events",
+        event_type: "state_changed",
+      } satisfies StartCommandMessage);
+      break;
+  }
+});
