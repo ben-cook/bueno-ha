@@ -1,5 +1,4 @@
 type AuthMessageType = "auth" | "auth_required" | "auth_ok" | "auth_invalid";
-
 type RegularMessageType = "subscribe_events";
 
 export type AuthMessage<

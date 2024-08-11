@@ -1,4 +1,3 @@
-import { StartCommandMessage } from "./types";
 import { HAWSClient } from "./client";
 
 console.log("Starting node process...");
@@ -11,19 +10,27 @@ if (SUPERVISOR_TOKEN == null) {
   );
 }
 
-const ws = new HAWSClient(SUPERVISOR_TOKEN);
+(async () => {
+  const ws = await HAWSClient.init(SUPERVISOR_TOKEN);
 
-ws.onMessage((message) => {
-  console.log(`received message: ${JSON.stringify(message, null, 2)}`);
+  const eventSubscriptionId = await ws.subscribeToEvents();
 
-  switch (message.type) {
-    case "auth_ok":
-      // subscribe to events
-      ws.send({
-        id: 10,
-        type: "subscribe_events",
-        event_type: "state_changed",
-      } satisfies StartCommandMessage);
-      break;
-  }
-});
+  ws.onMessage((message) => {
+    switch (message.type) {
+      case "event":
+        if (message.id === eventSubscriptionId) {
+          // @ts-ignore
+          const newState = message.event.data.new_state;
+          const eventInfo = {
+            entityId: newState.entity_id,
+            state: newState.state,
+            friendlyName: newState.attributes.friendly_name,
+          };
+          console.log(`New data: ${JSON.stringify(eventInfo, null, 2)}`);
+        }
+        break;
+      default:
+        break;
+    }
+  });
+})();
