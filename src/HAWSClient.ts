@@ -14,11 +14,15 @@ function parseMessage(raw: { toString: () => string }): Message {
   return parsed.data;
 }
 
-/** Home Assistant Web Socket client */
+/** Home Assistant Web Socket Client */
 export class HAWSClient {
   private authToken;
   private client!: WebSocket;
-  private eventSubscriptions = new Map<number, Function>();
+  /** This counter is used to identify a stream of events when subscribing to
+   * an event stream. Home Assistant requires event subscription IDs to
+   * monotonically increase.
+   */
+  private eventSubscriptionCounter = 1;
 
   /** See `init` method for public constructor */
   private constructor(authToken: string) {
@@ -42,9 +46,7 @@ export class HAWSClient {
 
       // Set up logger
       this.client.on("message", (raw) => {
-        console.log(`HAWSClient: RECV_RAW ${raw}`);
-        const message = parseMessage(raw);
-        console.log(`HAWSClient: RECV ${JSON.stringify(message, null, 2)}`);
+        console.log(`HAWSClient: RECV ${raw}`);
       });
 
       // Set up auth flow
@@ -83,21 +85,12 @@ export class HAWSClient {
     });
   }
 
-  private newEventSubscriptionId(): number {
-    const currentEventIds = new Set(this.eventSubscriptions.keys());
-    while (true) {
-      const newId = Math.floor(Math.random() * 512);
-      if (currentEventIds.has(newId)) continue;
-      return newId;
-    }
-  }
-
   /** Subscribes to an event stream and returns the id associated with the
    * event stream
    */
   public async subscribeToEvents(): Promise<number> {
     return new Promise((resolve) => {
-      const id = this.newEventSubscriptionId();
+      const id = this.eventSubscriptionCounter++;
 
       const callback = (raw: string) => {
         const message = parseMessage(raw);
@@ -129,7 +122,7 @@ export class HAWSClient {
   }
 
   public send(data: object) {
-    console.log(`HAWSClient: SEND ${JSON.stringify(data, null, 2)}`);
+    console.log(`HAWSClient: SEND ${JSON.stringify(data)}`);
     this.client.send(JSON.stringify(data));
   }
 }

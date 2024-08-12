@@ -3,8 +3,8 @@ export function isValidNumber(num: number): boolean {
   return !isNaN(num) && Number.isFinite(num);
 }
 
-export function safeParseInt(num: string, radix?: number): number | undefined {
-  const parsedInt = parseInt(num, radix);
+export function safeParseFloat(num: string): number | undefined {
+  const parsedInt = parseFloat(num);
   if (!isValidNumber(parsedInt)) return;
   return parsedInt;
 }

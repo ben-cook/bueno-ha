@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { IntegerSchema } from "./util/validators";
+import { FloatSchema } from "./util/validators";
 
 export const MessageSchema = z
   .object({
     type: z.string(),
-    id: IntegerSchema,
+    id: FloatSchema,
   })
   .passthrough();
 

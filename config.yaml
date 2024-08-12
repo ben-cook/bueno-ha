@@ -10,3 +10,21 @@ arch:
   - armhf
   - armv7
   - i386
+
+options:
+  entities: null
+  bueno_integration_id: null
+  bueno_api_url: null
+  bueno_credentials:
+    email: null
+    password: null
+
+schema:
+  entities:
+    - ha_sensor_id: str
+      bueno_data_stream_id: str
+  bueno_integration_id: str
+  bueno_api_url: str
+  bueno_credentials:
+    email: email
+    password: str
